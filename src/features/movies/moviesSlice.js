@@ -14,19 +14,43 @@ export const fetchMovies = createAsyncThunk(
   }
 );
 
+const loadFavoritesFromLocalStorage = () => {
+  try {
+    const serializedState = localStorage.getItem('favoriteMovies');
+    return serializedState ? JSON.parse(serializedState) : [];
+  } catch (e) {
+    console.warn('Could not load favorite movies from local storage:', e);
+    return [];
+  }
+};
+
+const saveFavoritesToLocalStorage = (favorites) => {
+  try {
+    const serializedState = JSON.stringify(favorites);
+    localStorage.setItem('favoriteMovies', serializedState);
+  } catch (e) {
+    console.warn('Could not save favorite movies to local storage:', e);
+  }
+};
+
 const moviesSlice = createSlice({
   name: 'movies',
   initialState: {
     movies: [],
+    favorites: loadFavoritesFromLocalStorage(),
     status: 'idle',
     error: null,
   },
   reducers: {
     toggleFavorite: (state, action) => {
-      const movie = state.movies.find((movie) => movie.id === action.payload);
+      const movieId = action.payload;
+      const movie = state.movies.find((movie) => movie.id === movieId);
       if (movie) {
         movie.isFavorite = !movie.isFavorite;
       }
+      const favorites = state.movies.filter((movie) => movie.isFavorite);
+      state.favorites = favorites;
+      saveFavoritesToLocalStorage(favorites);
     },
   },
   extraReducers: (builder) => {
@@ -36,7 +60,10 @@ const moviesSlice = createSlice({
       })
       .addCase(fetchMovies.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.movies = action.payload;
+        state.movies = action.payload.map((movie) => ({
+          ...movie,
+          isFavorite: state.favorites.some((fav) => fav.id === movie.id),
+        }));
       })
       .addCase(fetchMovies.rejected, (state, action) => {
         state.status = 'failed';
