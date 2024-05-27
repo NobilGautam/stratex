@@ -75,11 +75,6 @@ Open your browser and navigate to `http://localhost:3000`.
 
 ## Usage
 
-### Sidebar
-
-- **Sort Movies**: Sorts the movies by highest or lowest rating.
-- **View Favorite Movies / Back to Home**: Toggles between the main movie list and the favorite movies list.
-
 ### Movie List
 
 - Displays movies sorted by rating.
