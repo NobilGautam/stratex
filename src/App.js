@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
+import MovieList from './components/MovieList';
+import FavoriteMovies from './components/FavoriteMovies';
+import Navbar from './components/Navbar';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <Router>
+        <div className="app">
+          <Navbar/>
+          <div className="main-content flex">
+            <div className="content w-full">
+              <Routes>
+                <Route path="/" element={<MovieList />} />
+                <Route path="/favorites" element={<FavoriteMovies />} />
+              </Routes>
+            </div>
+          </div>
+        </div>
+      </Router>
+    </Provider>
   );
-}
+};
 
 export default App;
