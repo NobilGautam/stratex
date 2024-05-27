@@ -15,42 +15,32 @@ export const fetchMovies = createAsyncThunk(
 );
 
 const loadFavoritesFromLocalStorage = () => {
-  try {
-    const serializedState = localStorage.getItem('favoriteMovies');
-    return serializedState ? JSON.parse(serializedState) : [];
-  } catch (e) {
-    console.warn('Could not load favorite movies from local storage:', e);
-    return [];
-  }
-};
-
-const saveFavoritesToLocalStorage = (favorites) => {
-  try {
-    const serializedState = JSON.stringify(favorites);
-    localStorage.setItem('favoriteMovies', serializedState);
-  } catch (e) {
-    console.warn('Could not save favorite movies to local storage:', e);
-  }
+  const favorites = localStorage.getItem('favorites');
+  return favorites ? JSON.parse(favorites) : [];
 };
 
 const moviesSlice = createSlice({
   name: 'movies',
   initialState: {
     movies: [],
-    favorites: loadFavoritesFromLocalStorage(),
+    favoritesOrder: loadFavoritesFromLocalStorage(), // Load from localStorage
     status: 'idle',
     error: null,
   },
   reducers: {
     toggleFavorite: (state, action) => {
-      const movieId = action.payload;
-      const movie = state.movies.find((movie) => movie.id === movieId);
+      const movie = state.movies.find((movie) => movie.id === action.payload);
       if (movie) {
         movie.isFavorite = !movie.isFavorite;
+        if (movie.isFavorite) {
+          state.favoritesOrder.push(movie.id);
+        } else {
+          state.favoritesOrder = state.favoritesOrder.filter(
+            (id) => id !== movie.id
+          );
+        }
+        localStorage.setItem('favorites', JSON.stringify(state.favoritesOrder)); // Update localStorage
       }
-      const favorites = state.movies.filter((movie) => movie.isFavorite);
-      state.favorites = favorites;
-      saveFavoritesToLocalStorage(favorites);
     },
   },
   extraReducers: (builder) => {
@@ -60,10 +50,11 @@ const moviesSlice = createSlice({
       })
       .addCase(fetchMovies.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.movies = action.payload.map((movie) => ({
+        const moviesWithFavorites = action.payload.map((movie) => ({
           ...movie,
-          isFavorite: state.favorites.some((fav) => fav.id === movie.id),
+          isFavorite: state.favoritesOrder.includes(movie.id),
         }));
+        state.movies = moviesWithFavorites;
       })
       .addCase(fetchMovies.rejected, (state, action) => {
         state.status = 'failed';

@@ -16,9 +16,9 @@ const MovieList = () => {
   }, [status, dispatch]);
 
   return (
-    <div className="movie-list bg-[#0e0f10] pt-10 px-8">
-      {status === 'loading' && <div>Loading...</div>}
-      {status === 'failed' && <div>{error}</div>}
+    <div className="movie-list bg-[#0e0f10] pt-10 px-8 min-h-screen">
+      {status === 'loading' && <div className='text-white font-bold'>Loading...</div>}
+      {status === 'failed' && <div className='text-white font-bold'>{error}</div>}
       {status === 'succeeded' && (
         <div>
           {movies.map((movie) => (

@@ -5,6 +5,7 @@ import { store } from './app/store';
 import MovieList from './components/MovieList';
 import FavoriteMovies from './components/FavoriteMovies';
 import Navbar from './components/Navbar';
+import './App.css';
 
 const App = () => {
   return (
