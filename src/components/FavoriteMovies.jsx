@@ -8,7 +8,7 @@ const FavoriteMovies = () => {
 
   const favoriteMovies = favoritesOrder
     .map((id) => movies.find((movie) => movie.id === id))
-    .filter((movie) => movie && movie.isFavorite); // Add a check for null values
+    .filter((movie) => movie && movie.isFavorite);
 
   return (
     <div className="favorite-movies bg-[#0e0f10] pt-10 px-8 min-h-screen">

@@ -23,7 +23,7 @@ const moviesSlice = createSlice({
   name: 'movies',
   initialState: {
     movies: [],
-    favoritesOrder: loadFavoritesFromLocalStorage(), // Load from localStorage
+    favoritesOrder: loadFavoritesFromLocalStorage(), 
     status: 'idle',
     error: null,
   },
@@ -39,7 +39,7 @@ const moviesSlice = createSlice({
             (id) => id !== movie.id
           );
         }
-        localStorage.setItem('favorites', JSON.stringify(state.favoritesOrder)); // Update localStorage
+        localStorage.setItem('favorites', JSON.stringify(state.favoritesOrder));
       }
     },
   },
